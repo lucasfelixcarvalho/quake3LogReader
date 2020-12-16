@@ -10,7 +10,7 @@ namespace quakeLogReader
             Console.WriteLine("Let's read the file...");
 
             Quake3ArenaLogReader logReader = new Quake3ArenaLogReader();
-            logReader.ReadLog(string.Empty);
+            logReader.ReadLog(@"E:\Documents\Git\quake3LogReader\quakeLogReader\input\qgames.log");
 
             Console.WriteLine("Finished!");
 
@@ -21,6 +21,10 @@ namespace quakeLogReader
                 {
                     Console.WriteLine(row);
                 }
+            }
+            else
+            {
+                Console.WriteLine($"Total games: {logReader.Games.Count}");
             }
         }
     }
