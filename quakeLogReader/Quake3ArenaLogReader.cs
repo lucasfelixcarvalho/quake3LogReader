@@ -57,6 +57,16 @@ namespace quakeLogReader
                     gameCount += 1;
                     game = new GameDto(gameCount);
                 }
+                if (line.Contains("ClientUserinfoChanged:"))
+                {
+                    string playerInformation = line.Split("ClientUserinfoChanged:")[1].Trim();                    
+                    int id = Convert.ToInt32(playerInformation.Split(@"n\")[0].Trim());
+                    string name = playerInformation.Split(@"n\")[1].Split(@"\t\")[0].Trim();
+                    if (!game.Players.TryAdd(id, name)) // player already exists, change something, name could be one of them
+                    {
+                        game.Players[id] = name;
+                    }
+                }
                 if (line.Contains("Kill:"))
                 {
                     game.TotalKills++;

@@ -6,12 +6,14 @@ namespace quakeLogReader.Dto
     {
         public int Id { get; set; }
         public int TotalKills { get; set; }
-        public string[] Players { get; set; }
-        public Dictionary<string, int> Kills { get; set; }
+        public Dictionary<int, string> Players { get; private set; }
+        public Dictionary<int, int> Kills { get; private set; }
 
         public GameDto(int id)
         {
             Id = id;
+            Players = new Dictionary<int, string>();
+            Kills = new Dictionary<int, int>();
         }
     }
 }
