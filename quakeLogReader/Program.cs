@@ -1,4 +1,5 @@
 ﻿using System;
+using quakeLogReader.Report;
 
 namespace quakeLogReader
 {
@@ -13,18 +14,40 @@ namespace quakeLogReader
             logReader.ReadLog(@"E:\Documents\Git\quake3LogReader\quakeLogReader\input\logForTest.log");
 
             Console.WriteLine("Finished!");
+            Console.WriteLine("Showing results...");
 
+            ShowResults(logReader);
+        }
+
+        private static void ShowResults(Quake3ArenaLogReader logReader)
+        {
             if (logReader.HasErrors)
             {
-                Console.WriteLine("There are errors... :(");
-                foreach (var row in logReader.Errors)
-                {
-                    Console.WriteLine(row);
-                }
+                ShowErrors(logReader);
             }
             else
             {
-                Console.WriteLine($"Total games: {logReader.Games.Count}");
+                ShowReport(logReader);
+            }
+        }
+
+        private static void ShowErrors(Quake3ArenaLogReader logReader)
+        {
+            Console.WriteLine("There are errors... :(");
+            foreach (var row in logReader.Errors)
+            {
+                Console.WriteLine(row);
+            }
+        }
+
+        private static void ShowReport(Quake3ArenaLogReader logReader)
+        {
+            Console.WriteLine($"Total games: {logReader.Games.Count}");
+            ReportData report = null;
+            foreach (var game in logReader.Games)
+            {
+                report = new ReportData(game);
+                Console.WriteLine(report.ToString());
             }
         }
     }
