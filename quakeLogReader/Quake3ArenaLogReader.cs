@@ -75,6 +75,21 @@ namespace quakeLogReader
                     int killerId = Convert.ToInt32(playersAndWeapon.Split(" ")[0].Trim());
                     int victim = Convert.ToInt32(playersAndWeapon.Split(" ")[1].Trim());
                     int weapon = Convert.ToInt32(playersAndWeapon.Split(" ")[2].Trim());
+
+                    if (killerId == 1022) // when player is killed by world, it should lose one point
+                    {
+                        if (game.Kills.Any(x => x.Key == victim))
+                            game.Kills[victim]--;
+                        else
+                            game.Kills.Add(victim, -1);
+                    }
+                    else
+                    {
+                        if (game.Kills.Any(x => x.Key == killerId))
+                            game.Kills[killerId]++;
+                        else
+                            game.Kills.Add(killerId, 1);
+                    }
                 }
             }
             Games.RemoveAt(0);
