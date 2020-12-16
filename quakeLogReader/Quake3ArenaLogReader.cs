@@ -41,59 +41,35 @@ namespace quakeLogReader
                 return;
 
             ProcessFile(path);
+            PostProcessing();
+        }
+
+        private void PostProcessing()
+        {
+            Games.RemoveAll(x => x == null);
         }
 
         private void ProcessFile(string path)
         {
-            StreamReader file = new StreamReader(path);
-            string line;
-            int gameCount = 0;
-            GameDto game = new GameDto(gameCount);
-            while ((line = file.ReadLine()) != null)
+            using (StreamReader file = new StreamReader(path))
             {
-                if (line.Contains("InitGame:"))
+                string line;
+                int gameCount = 0;
+                GameDto game = null;
+                while ((line = file.ReadLine()) != null)
                 {
-                    Games.Add(game);
-                    gameCount += 1;
-                    game = new GameDto(gameCount);
-                }
-                if (line.Contains("ClientUserinfoChanged:"))
-                {
-                    string playerInformation = line.Split("ClientUserinfoChanged:")[1].Trim();                    
-                    int id = Convert.ToInt32(playerInformation.Split(@"n\")[0].Trim());
-                    string name = playerInformation.Split(@"n\")[1].Split(@"\t\")[0].Trim();
-                    if (!game.Players.TryAdd(id, name)) // player already exists, change something, name could be one of them
+                    if (line.Contains("InitGame:")) // init game marks a new game, could not fit into the line parser...
                     {
-                        game.Players[id] = name;
-                    }
-                }
-                if (line.Contains("Kill:"))
-                {
-                    game.TotalKills++;
-                    var killInformation = line.Split("Kill:");
-                    string playersAndWeapon = killInformation[1].Split(":")[0].Trim();
-                    int killerId = Convert.ToInt32(playersAndWeapon.Split(" ")[0].Trim());
-                    int victim = Convert.ToInt32(playersAndWeapon.Split(" ")[1].Trim());
-                    int weapon = Convert.ToInt32(playersAndWeapon.Split(" ")[2].Trim());
-
-                    if (killerId == 1022) // when player is killed by world, it should lose one point
-                    {
-                        if (game.Kills.Any(x => x.Key == victim))
-                            game.Kills[victim]--;
-                        else
-                            game.Kills.Add(victim, -1);
+                        Games.Add(game);
+                        gameCount += 1;
+                        game = new GameDto(gameCount);
                     }
                     else
-                    {
-                        if (game.Kills.Any(x => x.Key == killerId))
-                            game.Kills[killerId]++;
-                        else
-                            game.Kills.Add(killerId, 1);
-                    }
+                        Quake3ArenaLogLineParser.ParseLine(line, game);
                 }
+                
+                Games.Add(game);
             }
-            Games.RemoveAt(0);
-            Games.Add(game);
         }
 
         private bool IsInvalidToProcess(string path)
