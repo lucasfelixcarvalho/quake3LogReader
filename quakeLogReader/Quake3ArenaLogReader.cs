@@ -70,6 +70,11 @@ namespace quakeLogReader
                 if (line.Contains("Kill:"))
                 {
                     game.TotalKills++;
+                    var killInformation = line.Split("Kill:");
+                    string playersAndWeapon = killInformation[1].Split(":")[0].Trim();
+                    int killerId = Convert.ToInt32(playersAndWeapon.Split(" ")[0].Trim());
+                    int victim = Convert.ToInt32(playersAndWeapon.Split(" ")[1].Trim());
+                    int weapon = Convert.ToInt32(playersAndWeapon.Split(" ")[2].Trim());
                 }
             }
             Games.RemoveAt(0);
