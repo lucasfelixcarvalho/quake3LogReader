@@ -25,6 +25,7 @@ namespace quakeLogReader
             string playerInformation = line.Split("ClientUserinfoChanged:")[1].Trim();                    
             int id = Convert.ToInt32(playerInformation.Split(@"n\")[0].Trim());
             string name = playerInformation.Split(@"n\")[1].Split(@"\t\")[0].Trim();
+            
             if (!game.Players.TryAdd(id, name))
             {
                 game.Players[id] = name; // player already exists, something changed (name could be one of them)
@@ -55,9 +56,13 @@ namespace quakeLogReader
         private static void UpdatePlayerScore(GameDto game, int playerId, int score)
         {
             if (game.Score.Any(x => x.Key == playerId))
+            {
                 game.Score[playerId] += score;
+            }
             else
+            {
                 game.Score.Add(playerId, score);
+            }
         }
     }
 }

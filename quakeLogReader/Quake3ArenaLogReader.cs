@@ -38,7 +38,9 @@ namespace quakeLogReader
         private void Process(string path)
         {
             if (IsInvalidToProcess(path))
+            {
                 return;
+            }
 
             ProcessFile(path);
             PostProcessing();
@@ -65,7 +67,9 @@ namespace quakeLogReader
                         game = new GameDto(gameCount);
                     }
                     else
+                    {
                         Quake3ArenaLogLineParser.ParseLine(line, game);
+                    }
                 }
                 
                 Games.Add(game);
@@ -75,10 +79,14 @@ namespace quakeLogReader
         private bool IsInvalidToProcess(string path)
         {
             if (string.IsNullOrEmpty(path))
+            {
                 Errors.Add("Invalid path");
+            }
 
             if (!File.Exists(path))
+            {
                 Errors.Add("File does not exist");
+            }
 
             return HasErrors;
         }
