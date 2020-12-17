@@ -43,19 +43,19 @@ namespace quakeLogReader
             var playersAndWeapon = killInformation[1].Split(":")[0].Trim().Split(" ");
 
             int killerId = Convert.ToInt32(playersAndWeapon[0].Trim());
-            int victim = Convert.ToInt32(playersAndWeapon[1].Trim());
-            int weapon = Convert.ToInt32(playersAndWeapon[2].Trim());
+            int victimId = Convert.ToInt32(playersAndWeapon[1].Trim());
+            int weaponId = Convert.ToInt32(playersAndWeapon[2].Trim());
 
             if (killerId == WorldKillerId) // when player is killed by world, it should lose one point
             {
-                UpdatePlayerScore(game, victim, -1);
+                UpdatePlayerScore(game, victimId, -1);
             }
             else
             {
                 UpdatePlayerScore(game, killerId, 1);
             }
 
-            UpdateWeaponKillScore(game, weapon);
+            UpdateWeaponKillScore(game, weaponId);
         }
 
         private static void UpdatePlayerScore(GameDto game, int playerId, int score)

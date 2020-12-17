@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using quakeLogReader.Common;
 using quakeLogReader.Report;
 
@@ -12,7 +13,7 @@ namespace quakeLogReader
             Console.WriteLine("Let's read the file...");
 
             Quake3ArenaLogReader logReader = new Quake3ArenaLogReader();
-            logReader.ReadLog(@"E:\Documents\Git\quake3LogReader\quakeLogReader\input\logForTest.log");
+            logReader.ReadLog(@$"{Directory.GetCurrentDirectory()}\input\qgames.log");
 
             Console.WriteLine("Finished!");
             Console.WriteLine("Showing results...");
