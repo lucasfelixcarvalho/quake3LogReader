@@ -17,4 +17,9 @@
     <ProjectReference Include="..\quakeLogReader\quakeLogReader.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="./input/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
