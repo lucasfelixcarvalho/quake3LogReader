@@ -17,6 +17,7 @@ namespace quakeLogReader.Report
         {
             Players = new string[0];
             Kills = new Dictionary<string, int>();
+            KillsByMeans = new Dictionary<string, int>();
         }
 
         public ReportData(GameDto game)
