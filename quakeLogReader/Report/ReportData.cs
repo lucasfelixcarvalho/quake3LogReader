@@ -11,6 +11,7 @@ namespace quakeLogReader.Report
         public int TotalKills { get; set; }
         public string[] Players { get; private set; }
         public Dictionary<string, int> Kills { get; private set; }
+        public Dictionary<string, int> KillsByMeans { get; private set; }
 
         public ReportData()
         {
@@ -24,6 +25,7 @@ namespace quakeLogReader.Report
             TotalKills = game.TotalKills;
             Players = game.Players.Values.ToArray();
             Kills = new Dictionary<string, int>();
+            KillsByMeans = new Dictionary<string, int>();
 
             foreach (var row in game.Players)
             {
@@ -32,6 +34,14 @@ namespace quakeLogReader.Report
                 int totalKills = game.Score.FirstOrDefault(x => x.Key == playerId).Value;
 
                 Kills.Add(playerName, totalKills);
+            }
+
+            foreach (var row in game.KillsByWeapon)
+            {
+                string weaponName = row.Key.ToString();
+                int totalKills = row.Value;
+
+                KillsByMeans.Add(weaponName, totalKills);
             }
         }
 

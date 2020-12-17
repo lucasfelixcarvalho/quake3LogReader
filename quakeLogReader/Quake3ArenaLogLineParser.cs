@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using quakeLogReader.Common;
 using quakeLogReader.Dto;
 
 namespace quakeLogReader
@@ -7,14 +8,16 @@ namespace quakeLogReader
     public static class Quake3ArenaLogLineParser
     {
         private static readonly int WorldKillerId = 1022;
+        private static readonly string PlayerInformationIdentifier = "ClientUserinfoChanged:";
+        private static readonly string KillIdentifier = "Kill:";
 
         public static void ParseLine(string line, GameDto game)
         {
-            if (line.Contains("ClientUserinfoChanged:"))
+            if (line.Contains(PlayerInformationIdentifier))
             {
                 ParsePlayerInformations(line, game);
             }
-            else if (line.Contains("Kill:"))
+            else if (line.Contains(KillIdentifier))
             {
                 ParseKill(line, game);
             }
@@ -22,7 +25,7 @@ namespace quakeLogReader
 
         private static void ParsePlayerInformations(string line, GameDto game)
         {
-            string playerInformation = line.Split("ClientUserinfoChanged:")[1].Trim();                    
+            string playerInformation = line.Split(PlayerInformationIdentifier)[1].Trim();                    
             int id = Convert.ToInt32(playerInformation.Split(@"n\")[0].Trim());
             string name = playerInformation.Split(@"n\")[1].Split(@"\t\")[0].Trim();
             
@@ -36,7 +39,7 @@ namespace quakeLogReader
         {
             game.TotalKills++;
 
-            var killInformation = line.Split("Kill:");
+            var killInformation = line.Split(KillIdentifier);
             var playersAndWeapon = killInformation[1].Split(":")[0].Trim().Split(" ");
 
             int killerId = Convert.ToInt32(playersAndWeapon[0].Trim());
@@ -51,6 +54,8 @@ namespace quakeLogReader
             {
                 UpdatePlayerScore(game, killerId, 1);
             }
+
+            UpdateWeaponKillScore(game, weapon);
         }
 
         private static void UpdatePlayerScore(GameDto game, int playerId, int score)
@@ -62,6 +67,31 @@ namespace quakeLogReader
             else
             {
                 game.Score.Add(playerId, score);
+            }
+        }
+
+        private static void UpdateWeaponKillScore(GameDto game, int weaponId)
+        {
+            MeansOfDeath weapon = GetMeansOfDeathFromIntegerValue(weaponId);
+            if (game.KillsByWeapon.Any(x => x.Key == weapon))
+            {
+                game.KillsByWeapon[weapon]++;
+            }
+            else
+            {
+                game.KillsByWeapon.Add(weapon, 1);
+            }
+        }
+
+        private static MeansOfDeath GetMeansOfDeathFromIntegerValue(int weaponId)
+        {
+            if (Enum.IsDefined(typeof(MeansOfDeath), weaponId))
+            {
+                return (MeansOfDeath)weaponId;
+            }
+            else
+            {
+                return MeansOfDeath.MOD_UNKNOWN;
             }
         }
     }

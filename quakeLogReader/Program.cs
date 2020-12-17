@@ -1,4 +1,5 @@
 ﻿using System;
+using quakeLogReader.Common;
 using quakeLogReader.Report;
 
 namespace quakeLogReader
