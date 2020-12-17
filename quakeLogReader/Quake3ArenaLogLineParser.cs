@@ -10,6 +10,7 @@ namespace quakeLogReader
         private static readonly int WorldKillerId = 1022;
         private static readonly string PlayerInformationIdentifier = "ClientUserinfoChanged:";
         private static readonly string KillIdentifier = "Kill:";
+        private static readonly string PlayerDisconnectIdentifier = "ClientDisconnect:";
 
         public static void ParseLine(string line, GameDto game)
         {
@@ -21,6 +22,17 @@ namespace quakeLogReader
             {
                 ParseKill(line, game);
             }
+            else if (line.Contains(PlayerDisconnectIdentifier))
+            {
+                ParsePlayerDisconnect(line, game);
+            }
+        }
+
+        private static void ParsePlayerDisconnect(string line, GameDto game)
+        {
+            int playerId = Convert.ToInt32(line.Split(PlayerDisconnectIdentifier)[1].Trim());
+            game.Players.Remove(playerId);
+            game.Score.Remove(playerId);
         }
 
         private static void ParsePlayerInformations(string line, GameDto game)

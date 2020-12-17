@@ -76,8 +76,35 @@ namespace quakeLogReader.Tests
             Assert.Equal(2, game.Players.Count);
             Assert.Equal(1, game.Players.Values.Count(x => x.Equals("Isgalamido")));
             Assert.Equal(1, game.Players.Values.Count(x => x.Equals("Dono da Bola")));
+            Assert.Equal(2, game.Score.Count);
             Assert.Equal(1, game.Score[2]); // Isgalamido
             Assert.Equal(0, game.Score[3]); // Dono da Bola
+            Assert.Equal(3, game.KillsByWeapon[Common.MeansOfDeath.MOD_ROCKET_SPLASH]);
+            Assert.Equal(2, game.KillsByWeapon[Common.MeansOfDeath.MOD_TRIGGER_HURT]);
+        }
+
+        [Fact]
+        public void Test5_WhenPlayerDisconnects_ThenItShouldRemoveAllItsInformation()
+        {
+            // Arrange
+            Quake3ArenaLogReader reader = new Quake3ArenaLogReader();
+            string currentDirectory = Directory.GetCurrentDirectory();
+
+            // Act
+            reader.ReadLog(@$"{currentDirectory}\input\Test5.log");
+
+            // Assert
+            Assert.False(reader.HasErrors);
+            Assert.Single(reader.Games);
+            
+            GameDto game = reader.Games[0];
+            Assert.NotNull(game);
+            Assert.Equal(5, game.TotalKills);
+            Assert.Equal(1, game.Players.Count);
+            Assert.Equal(1, game.Players.Values.Count(x => x.Equals("Isgalamido")));
+            Assert.Equal(0, game.Players.Values.Count(x => x.Equals("Dono da Bola")));
+            Assert.Equal(1, game.Score.Count);
+            Assert.Equal(1, game.Score[2]); // Isgalamido
             Assert.Equal(3, game.KillsByWeapon[Common.MeansOfDeath.MOD_ROCKET_SPLASH]);
             Assert.Equal(2, game.KillsByWeapon[Common.MeansOfDeath.MOD_TRIGGER_HURT]);
         }
